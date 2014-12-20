@@ -80,8 +80,8 @@ file or a Python `virtualenv` for instance.
 An env file is a file that is in the following format:
 
 ```
-S3_BUCKET=YOURS3BUCKET
-SECRET_KEY=YOURSECRETKEYGOESHERE
+export S3_BUCKET=YOURS3BUCKET
+export SECRET_KEY=YOURSECRETKEYGOESHERE
 ```
 
 This env file sets up the environment for processes started by this
