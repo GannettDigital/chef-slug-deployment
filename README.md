@@ -54,7 +54,7 @@ Attributes
     <td><tt>['slug-deployment'']['command']</tt></td>
     <td>String</td>
     <td>Command to start the service</td>
-    <td><tt>--</tt></td>
+    <td><tt></tt></td>
   </tr>
 </table>
 
