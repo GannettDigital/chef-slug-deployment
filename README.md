@@ -1,5 +1,4 @@
-slug-deployment Cookbook
-===========================
+# slug-deployment Cookbook
 
 This recipe implements deployment of a
 [12-factor](http://12factor.net/) application.  It is inspired by the
@@ -9,11 +8,10 @@ using this recipe.
 It is purposely designed to be a simple design that can be integrated
 easily with cloud scaling environments and continuous delivery systems.
 
-https://github.com/ericmoritz/slug-deployment
+https://github.com/ericmoritz/chef-slug-deployment
 
-Requirements
-------------
-  
+## Requirements
+
 This cookbook will install the following packages:
 
   - nginx
@@ -22,8 +20,7 @@ This cookbook will install the following packages:
 If you want to use s3:// URLs, `s3cmd` needs to be installed and
 configured before running this recipe.
 
-Attributes
-----------
+## Attributes
 
 <table>
   <tr>
@@ -51,15 +48,14 @@ Attributes
     <td><tt></tt></td>
   </tr>
   <tr>
-    <td><tt>['slug-deployment'']['cmd']</tt></td>
+    <td><tt>['slug-deployment'']['command']</tt></td>
     <td>String</td>
     <td>Command to start the service</td>
-    <td><tt>--</tt></td>
+    <td><tt></tt></td>
   </tr>
 </table>
 
-Usage
-------
+## Usage
 
 This recipe is intended to be use as a dependancy of a more specific
 recipe.  Your service repipe will install prerequisites for running
@@ -71,22 +67,21 @@ The slug and env files are built and uploaded by your continuous
 delivery tool.  Once those artifacts are uploaded, this recipe can
 be executed on new node.
 
-What is a slug?
-~~~~~~~~~~~~~~~~
+### What is a slug?
 
 A slug is a .tgz file that contains the root directory of your
 service.  It contains all the necessary libraries to run your
 application.  This could be a `sbt universal:packageZipTarball` tgz
 file or a Python `virtualenv` for instance.
 
-What is a env file?
-~~~~~~~~~~~~~~~~~~~~
+### What is a env file?
+
 
 An env file is a file that is in the following format:
 
 ```
-S3_BUCKET=YOURS3BUCKET
-SECRET_KEY=YOURSECRETKEYGOESHERE
+export S3_BUCKET=YOURS3BUCKET
+export SECRET_KEY=YOURSECRETKEYGOESHERE
 ```
 
 This env file sets up the environment for processes started by this
