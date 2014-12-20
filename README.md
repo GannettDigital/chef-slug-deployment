@@ -44,7 +44,7 @@ configured before running this recipe.
   <tr>
     <td><tt>['slug-deployment']['env_url]</tt></td>
     <td>Boolean</td>
-    <td>URL to the env file, http://, https://, s3://</td>
+    <td>An ERB template for the environment URL, http://, https://, s3://</td>
     <td><tt></tt></td>
   </tr>
   <tr>
@@ -76,7 +76,6 @@ file or a Python `virtualenv` for instance.
 
 ### What is a env file?
 
-
 An env file is a file that is in the following format:
 
 ```
@@ -86,6 +85,28 @@ export SECRET_KEY=YOURSECRETKEYGOESHERE
 
 This env file sets up the environment for processes started by this
 recipe.
+
+## Tutorial: Hello Service
+
+We have provided a "Hello, World!" service in `example/hello-service`. We will go
+through the procces of building and deploying the slug to S3. Then
+deploy the slug to Vagrant.
+
+
+### Build 
+
+First the slug needs to be built and deployed to a URL accessable
+by the machine being built by Chef.  This URL will be your 
+`['slug-deployment']['slug_url']` attribute.
+
+Let's build the `hello-service`.
+
+```
+$ s3cmd --configure # skip if you've done this
+$ cd example/hello-service
+$ S3_BUCKET=<<your S3 bucket>> make slug upload
+```
+
 
 
 License and Authors

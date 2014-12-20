@@ -7,29 +7,30 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.hostname = 'scala'
+  config.vm.hostname = 'hello-service'
   config.vm.box = 'chef/centos-6.5'
   config.omnibus.chef_version = 'latest'
   config.berkshelf.enabled = true
   config.vm.network :forwarded_port, guest: 80, host: 8000
 
   config.vm.provision :chef_solo do |chef|
+    # Configure the boxes environment.  We use this to generate the env_url
+    chef.environments_path = "environments"
+    chef.roles_path = "roles"
+
+    chef.environment = "stage"
+
+    # override some of the role values with the S3 config
     chef.json = {
-      "slug-deployment" => {
-        "name" => "hello-service",
-        "slug_url" => "s3://eam-scratch/hello-service-latest.tgz",
-        "env_url" => "s3://eam-scratch/hello-service.env",
-        "command" => "hello-service-latest/bin/hello-service"
-      },
+      #"slug-deployment" => {
+      #  "slug_url" => "s3://#{ENV['S3_BUCKET']}/hello-service/hello-service-latest.tgz",
+      #  "env_url" => "s3://#{ENV['S3_BUCKET']}/hello-service/environments/<% node.chef_environment %>.env",
+      #},
       "s3cmd" => {
-        "access_key" => "AKIAJZO4IKJZS3KSYJDQ",
-        "secret_key" => "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"
+        "access_key" => ENV['AWS_ACCESS_KEY_ID'],
+        "secret_key" => ENV['AWS_SECRET_ACCESS_KEY']
       }
     }
-    chef.run_list = [
-      'recipe[s3cmd]',
-      'recipe[java]',
-      'recipe[slug-deployment]'
-    ]
+    chef.run_list = ["role[hello-service]"]
   end
 end
