@@ -1,0 +1,5 @@
+source 'https://supermarket.getchef.com'
+
+cookbook 'java'
+cookbook 's3cmd', git: 'git@github.com:GannettDigital/chef-s3cmd.git'
+cookbook 'slug-deployment', path: "../../"

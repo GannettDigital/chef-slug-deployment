@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+# This is a Vagrant file for testing the recipe
+#
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.hostname = 'scala'
+  config.vm.box = 'chef/centos-6.5'
+  config.omnibus.chef_version = 'latest'
+  config.berkshelf.enabled = true
+  config.vm.network :forwarded_port, guest: 80, host: 8000
+
+  config.vm.provision :chef_solo do |chef|
+    chef.json = {
+      "slug-deployment" => {
+        "name" => "hello-service",
+        "slug_url" => "s3://eam-scratch/hello-service-latest.tgz",
+        "env_url" => "s3://eam-scratch/hello-service.env",
+        "command" => "hello-service-latest/bin/hello-service"
+      },
+      "s3cmd" => {
+        "access_key" => "AKIAJZO4IKJZS3KSYJDQ",
+        "secret_key" => "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"
+      }
+    }
+    chef.run_list = [
+      'recipe[s3cmd]',
+      'recipe[java]',
+      'recipe[slug-deployment]'
+    ]
+  end
+end
