@@ -1,0 +1,19 @@
+{
+  "name": "hello-service",
+  "description": "The role for our hello service",
+  "json_class": "Chef::Role",
+  "chef_type": "role",
+  "override_attributes": {
+      "slug-deployment": {
+	  "name": "hello-service",
+	  "slug_url": "s3://eam-scratch/hello-service/hello-service-latest.tgz",
+	  "env_url": "s3://eam-scratch/hello-service/environments/<%= node.chef_environment %>.env",
+          "command": "hello-service-latest/bin/hello-service"
+      }
+  },
+  "run_list": [
+      "recipe[s3cmd]",
+      "recipe[java]",
+      "recipe[slug-deployment]"
+  ]
+}
