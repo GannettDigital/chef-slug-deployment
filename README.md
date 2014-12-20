@@ -9,7 +9,7 @@ using this recipe.
 It is purposely designed to be a simple design that can be integrated
 easily with cloud scaling environments and continuous delivery systems.
 
-https://github.com/ericmoritz/slug-deployment
+https://github.com/ericmoritz/chef-slug-deployment
 
 Requirements
 ------------
