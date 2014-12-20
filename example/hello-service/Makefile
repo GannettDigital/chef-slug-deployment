@@ -11,7 +11,7 @@ slug:
 
 upload:
 	# Upload our slug to S3
-	s3cmd put target/universal/hello-service-latest.tgz s3://${S3_BUCKET}/hello-service/
+	s3cmd put target/universal/hello-service-latest.tgz s3://eam-scratch/hello-service/
 
 	# Upload our environments to S3
-	s3cmd put --recursive environments s3://${S3_BUCKET}/hello-service/
+	s3cmd put --recursive environments s3://eam-scratch/hello-service/
