@@ -1,14 +1,34 @@
 # slug-deployment Cookbook
 
-This recipe implements deployment of a
-[12-factor](http://12factor.net/) application.  It is inspired by the
-Heroku and applications written for Heroku should be easy to deploy
-using this recipe.
+The goal of this project is to provide a very general and simple
+recipe for deploying [12-factor](http://12factor.net/) applications
+using cloud servers and a continuous delivery pipeline.
 
-It is purposely designed to be a simple design that can be integrated
-easily with cloud scaling environments and continuous delivery systems.
+It has support for both [.env](https://github.com/bkeepers/dotenv)
+files and a [Procfile](https://devcenter.heroku.com/articles/procfile).
+
+It should be very easy to deploy applications already built on Heroku.
 
 https://github.com/ericmoritz/chef-slug-deployment
+
+## What is a slug?
+
+A slug is a `.tgz` file that contains the root directory of your
+service.
+
+It contains all the necessary libraries to run your application.  This
+could be a `sbt universal:packageZipTarball` tgz file or a Python
+`virtualenv` or a `node.js` root.
+
+## Design
+
+```
+   nginx -> supervisord -> app processes
+```
+
+This recipe will read the Procfile at the root of your slug `.tgz` and
+generate a [supervisord] conf file for the processes defined in the
+Procfile.
 
 ## Requirements
 
@@ -17,8 +37,7 @@ This cookbook will install the following packages:
   - nginx
   - supervisor
 
-If you want to use s3:// URLs, `s3cmd` needs to be installed and
-configured before running this recipe.
+If you want to use `s3://` URLs, `s3cmd` needs to be installed.
 
 ## Attributes
 
@@ -55,57 +74,26 @@ configured before running this recipe.
   </tr>
 </table>
 
-## Usage
+A note about the `env_url`.  The `env_url` is a ERB template string
+that has access to the chef `node` variable.  This gives you access to
+values such as `node.chef_environment` as well as any attributes
+defined by your chef roles and chef environment.
 
-This recipe is intended to be use as a dependancy of a more specific
-recipe.  Your service repipe will install prerequisites for running
-your service.  For instance if you have written a Python app, your
-service deployment recipe will install `python` and then
-`slug-deployment`.
-
-The slug and env files are built and uploaded by your continuous
-delivery tool.  Once those artifacts are uploaded, this recipe can
-be executed on new node.
-
-### What is a slug?
-
-A slug is a .tgz file that contains the root directory of your
-service.  It contains all the necessary libraries to run your
-application.  This could be a `sbt universal:packageZipTarball` tgz
-file or a Python `virtualenv` for instance.
-
-### What is a env file?
-
-An env file is a file that is in the following format:
+You can use the template to generate a environment specific URL such as:
 
 ```
-export S3_BUCKET=YOURS3BUCKET
-export SECRET_KEY=YOURSECRETKEYGOESHERE
+s3://eam-scratch/hello-service/environments/<%= node.chef_environment %>.env
 ```
 
-This env file sets up the environment for processes started by this
-recipe.
 
 ## Example: Hello Service
 
-We have provided a "Hello, World!" service in `example/hello-service`.
-It is a simple Scala web service that greets you differently based on
-the environment it is deployed to.
+We have provided a "Hello, World!" service in `example/hello-service`
+and a sample Vagrant configuration in
+`example/hello-service-deployment`.
 
-
-### Build 
-
-First the slug needs to be built and deployed to a URL accessable
-by the machine being built by Chef.  This URL will be your 
-`['slug-deployment']['slug_url']` attribute.
-
-Let's build the `hello-service`.
-
-```
-$ s3cmd --configure # skip if you've done this
-$ cd example/hello-service
-$ S3_BUCKET=<<your S3 bucket>> make slug upload
-```
+`hello-service` is a simple Scala web service that greets you
+differently based on the environment it is deployed to.
 
 License and Authors
 -------------------
