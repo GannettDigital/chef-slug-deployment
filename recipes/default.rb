@@ -1,4 +1,7 @@
 require 'uri'
+chef_gem 'foreman'
+require 'foreman/procfile'
+require 'dotenv'
 
 include_recipe 'nginx'
 include_recipe 'supervisor'
@@ -8,9 +11,11 @@ include_recipe 'supervisor'
 ###############################################################################
 cfg = SlugDeployment.cfg(node)
 
-def download(url, path)
+def download(url, path, user)
   if url.start_with? "s3://" then
-    execute "s3cmd get --force #{url} #{path}"
+    execute "s3cmd get --force #{url} #{path}" do
+
+    end
   else 
     remote_file path do
       source url
@@ -22,49 +27,60 @@ end
 ###############################################################################
 ## Set up the service's user and service_root
 ###############################################################################
-user cfg.owner do
+user cfg.user do
   supports :manage_home => true
-  home cfg.owner_home
+  home cfg.home
 end
 
-directory cfg.slug_app_root do
+directory cfg.app_root do
   mode 0755
-  owner owner
+  owner cfg.user
   recursive true
 end
 
 
-template cfg.start_script do
-  source "run-service.erb"
-  mode 0555
+###############################################################################
+## Download and extract the slug
+###############################################################################
+download(cfg.slug_url, cfg.slug_path, cfg.user)
+execute "tar xvzf #{cfg.slug_path}" do
+  cwd cfg.app_root
+  user cfg.user
 end
-
-
 
 ###############################################################################
 ## Download the env
 ###############################################################################
-download(cfg.env_url, cfg.env_path)
+download(cfg.env_url, cfg.env_path, cfg.user)
 
-###############################################################################
-## Download and extract the slug
-###############################################################################
-download(cfg.slug_url, cfg.slug_path)
-execute "tar xvzf #{cfg.slug_path}" do
-  cwd cfg.slug_app_root
-end
 
 
 
 ###############################################################################
 ## Configure Supervisor
 ###############################################################################
-supervisor_service cfg.slug_name do
-  action :enable
-  autostart true
-  user cfg.owner
-  directory cfg.slug_app_root
-  command cfg.command
+ruby_block "config" do
+  block do
+    node.set['env'] = Dotenv::Environment.new("#{cfg.cwd}/.env")
+    node.set['env']['PORT'] = "5000"
+    procs = []
+    Foreman::Procfile.new("#{cfg.cwd}/Procfile").entries do |name, command| 
+      procs.push({:name => name, :command => command})
+    end
+    node.set['procs'] = procs
+  end
+end
+
+
+
+template "/etc/supervisor.d/#{cfg.app_name}.conf" do
+  source "supervisor-group.conf.erb"
+  mode 0644
+  variables :cfg => cfg
+end
+
+service "supervisor" do
+  action [:restart]
 end
 
 ###############################################################################

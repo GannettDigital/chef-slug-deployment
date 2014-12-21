@@ -18,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.environments_path = "environments"
     chef.roles_path = "roles"
 
-    chef.environment = "stage"
+    chef.environment = "prod"
 
     # override some of the role values with the S3 config
     chef.json = {

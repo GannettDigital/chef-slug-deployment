@@ -24,3 +24,4 @@ libraryDependencies ++= {
   )
 }
 
+mappings in Universal += (new File("src/main/resources/Procfile")) -> "Procfile"

@@ -48,9 +48,9 @@ configured before running this recipe.
     <td><tt></tt></td>
   </tr>
   <tr>
-    <td><tt>['slug-deployment'']['command']</tt></td>
+    <td><tt>['slug-deployment'']['chdir']</tt></td>
     <td>String</td>
-    <td>Command to start the service</td>
+    <td>before starting the service chdir to the directory relative to the slug root</td>
     <td><tt></tt></td>
   </tr>
 </table>
@@ -86,11 +86,11 @@ export SECRET_KEY=YOURSECRETKEYGOESHERE
 This env file sets up the environment for processes started by this
 recipe.
 
-## Tutorial: Hello Service
+## Example: Hello Service
 
-We have provided a "Hello, World!" service in `example/hello-service`. We will go
-through the procces of building and deploying the slug to S3. Then
-deploy the slug to Vagrant.
+We have provided a "Hello, World!" service in `example/hello-service`.
+It is a simple Scala web service that greets you differently based on
+the environment it is deployed to.
 
 
 ### Build 
@@ -106,8 +106,6 @@ $ s3cmd --configure # skip if you've done this
 $ cd example/hello-service
 $ S3_BUCKET=<<your S3 bucket>> make slug upload
 ```
-
-
 
 License and Authors
 -------------------
