@@ -9,37 +9,87 @@ files and a [Procfile](https://devcenter.heroku.com/articles/procfile).
 
 It should be very easy to deploy applications already built on Heroku.
 
-https://github.com/ericmoritz/chef-slug-deployment
+This recipe is intended to be part of a bigger continuous delivery
+pipeline and auto-scalable cloud based solution.  A typical continuous
+delivery pipeline could be as follows:
+
+1. Build Phase
+  1. Create a build VM
+  2. Build and unit-test slug
+  3. Upload Slug
+2. Create a fresh stage VM
+  1. Execute a chef role using `recipe[slug-deployment]` using the
+     `stage` chef environment.
+  2. Create an image of stage VM
+  3. Deploy image to a stage cluster
+  4. Execute acceptance tests against stage cluster
+3. Create a fresh prod VM
+  1. Execute a chef role using `recipe[slug-deployment]` using the
+     `prod` chef environment.
+  2. Create an image of prod VM
+  3. Deploy image to a new prod cluster
+  4. Execute availability tests against the prod cluster
+  5. Replace old prod cluster with new prod cluster.
+  
+
+### Design
+
+This recipe will read the Procfile at the root of your slug `.tgz` and
+generate a [supervisord](http://supervisord.org/) config for the
+processes defined in the Procfile.
+
+Your web service binds to `127.0.0.1:$PORT`.  Nginx forwards traffic
+from port 80 to your web service.
+
+We use Nginx because your application runs under its own user and in
+its own root to protect the system from application faults and
+exploits.
+
+Nginx will also allow us to efficiently serve static content when that
+feature is implemented.
 
 ## What is a slug?
 
 A slug is a `.tgz` file that contains the root directory of your
-service.
+service. It contains all the necessary libraries to run your application.
 
-It contains all the necessary libraries to run your application.  This
-could be a `sbt universal:packageZipTarball` tgz file or a Python
-`virtualenv` or a `node.js` root.
+Examples of possible slugs could be:
 
-## Design
+ * a tgz with a Python `virtualenv`
+ * a `sbt universal:packageZipTarball` 
+ * a node.js project root, with package installed in `node_packages`
+
+## Procfile?
+
+The [Procfile]() is placed in the root of the `.tgz` file and is used to
+configure [supervisord]().
 
 ```
-   nginx -> supervisord -> app processes
+web: gunicorn hellodjango.wsgi --log-file -
+worker: celery worker --app=tasks.app
 ```
 
-This recipe will read the Procfile at the root of your slug `.tgz` and
-generate a [supervisord] conf file for the processes defined in the
-Procfile.
+For instance the Profile listed above will launch two processes, the
+first is a `gunicorn` web services running on the `127.0.0.1:$PORT`.
 
-## Requirements
+The second is the [celery](http://www.celeryproject.org/) distributed
+task queue system running in a separate process.
 
-This cookbook will install the following packages:
+## Logging
 
-  - nginx
-  - supervisor
+In true [12 Factor](http://12factor.net/logs) fashion, app logs are
+treated as an event stream.  This stream is simple sent to `syslog`.
+
+You can configure your system to forward these events to a log
+aggregator of your choice.
+
+## Usage
+
+### Requirements
 
 If you want to use `s3://` URLs, `s3cmd` needs to be installed.
 
-## Attributes
+### Attributes
 
 <table>
   <tr>
@@ -86,7 +136,7 @@ s3://eam-scratch/hello-service/environments/<%= node.chef_environment %>.env
 ```
 
 
-## Example: Hello Service
+### Example: Hello Service
 
 We have provided a "Hello, World!" service in `example/hello-service`
 and a sample Vagrant configuration in
@@ -95,8 +145,9 @@ and a sample Vagrant configuration in
 `hello-service` is a simple Scala web service that greets you
 differently based on the environment it is deployed to.
 
-License and Authors
--------------------
+## License and Authors
+
 
 Authors: Eric Moritz (http://github.com/ericmoritz)
+https://github.com/ericmoritz/chef-slug-deployment
 
