@@ -62,10 +62,11 @@ download(cfg.env_url, cfg.env_path, cfg.user)
 ruby_block "config" do
   block do
     node.set['env'] = Dotenv::Environment.new("#{cfg.cwd}/.env")
-    node.set['env']['PORT'] = "5000"
+    port = 5000
     procs = []
     Foreman::Procfile.new("#{cfg.cwd}/Procfile").entries do |name, command| 
-      procs.push({:name => name, :command => command})
+      procs.push({:name => name, :command => command, :port => port})
+      port = port + 1
     end
     node.set['procs'] = procs
   end

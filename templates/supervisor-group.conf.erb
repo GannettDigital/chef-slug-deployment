@@ -5,10 +5,10 @@ autostart=true
 autorestart=true
 stdout_logfile=syslog
 stderr_logfile=syslog
-environment=<%= node['env'].sort.map{|k,v| "#{k}=\"#{v}\""}.join(',') %>
+environment=PORT=<%= p[:port] %><% unless node['env'].empty? %>,<% end %><%= node['env'].sort.map{|k,v| "#{k}=\"#{v}\""}.join(',') %>
 directory=<%= @cfg.cwd %>
 user=<%= @cfg.user %>
 <% end %>
 
 [group:<%= @cfg.app_name %>]
-programs=<%= node['procs'].map{|e| e['name'] }.join(",") %>
+programs=<%= node['procs'].map{|p| p[:name] }.join(",") %>
