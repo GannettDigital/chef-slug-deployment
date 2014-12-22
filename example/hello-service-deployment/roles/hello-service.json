@@ -8,7 +8,12 @@
 	  "name": "hello-service",
 	  "slug_url": "s3://eam-scratch/hello-service/hello-service-latest.tgz",
 	  "env_url": "s3://eam-scratch/hello-service/environments/<%= node.chef_environment %>.env",
-	  "chdir": "hello-service-latest"
+	  "chdir": "hello-service-latest",
+	  "static": {
+	      "/static/": {
+		  "alias": "static/"
+	      }
+	  }
       }
   },
   "run_list": [

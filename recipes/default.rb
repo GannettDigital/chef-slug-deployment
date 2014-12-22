@@ -62,11 +62,17 @@ download(cfg.env_url, cfg.env_path, cfg.user)
 ruby_block "config" do
   block do
     node.set['env'] = Dotenv::Environment.new("#{cfg.cwd}/.env")
-    port = 5000
+    port = 5001
     procs = []
     Foreman::Procfile.new("#{cfg.cwd}/Procfile").entries do |name, command| 
-      procs.push({:name => name, :command => command, :port => port})
-      port = port + 1
+      # web is always on web, everything else is an offset of 5000
+      if name == "web" then
+        p = 5000
+      else
+        p = port
+        port = port + 1
+      end
+      procs.push({:name => name, :command => command, :port => p})
     end
     node.set['procs'] = procs
   end
@@ -90,6 +96,7 @@ end
 template "/etc/nginx/conf.d/default.conf" do
   source "slug-nginx.conf.erb"
   mode 0644
+  variables :cfg => cfg
 end
 
 file "/etc/nginx/sites-enabled/*" do

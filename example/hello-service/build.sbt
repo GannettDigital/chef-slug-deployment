@@ -1,7 +1,7 @@
-import com.typesafe.sbt.SbtNativePackager._
-import NativePackagerKeys._
+import NativePackagerHelper._
 
-packageArchetype.java_application
+enablePlugins(JavaAppPackaging)
+
 
 name  := "hello-service"
 
@@ -24,4 +24,5 @@ libraryDependencies ++= {
   )
 }
 
-mappings in Universal += (new File("src/main/resources/Procfile")) -> "Procfile"
+mappings in Universal ++= directory("static")
+mappings in Universal += file("src/main/resources/Procfile") -> "Procfile"
