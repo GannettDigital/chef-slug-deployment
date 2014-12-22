@@ -5,7 +5,7 @@ autostart=true
 autorestart=true
 stdout_logfile=syslog
 stderr_logfile=syslog
-environment=PORT=<%= p[:port] %><% unless node['env'].empty? %>,<% end %><%= node['env'].sort.map{|k,v| "#{k}=\"#{v}\""}.join(',') %>
+environment=PORT=<%= p[:port] %><% unless node['slug-deployment']['env'].empty? %>,<% end %><%= node['slug-deployment']['env'].sort.map{|k,v| "#{k}=\"#{v}\""}.join(',') %>
 directory=<%= @cfg.cwd %>
 user=<%= @cfg.user %>
 <% end %>

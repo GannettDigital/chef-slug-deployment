@@ -61,7 +61,7 @@ download(cfg.env_url, cfg.env_path, cfg.user)
 ###############################################################################
 ruby_block "config" do
   block do
-    node.set['env'] = Dotenv::Environment.new("#{cfg.cwd}/.env")
+    node.set['slug-deployment']['env'] = node['slug-deployment']['env'].merge(Dotenv::Environment.new("#{cfg.cwd}/.env"))
     port = 5001
     procs = []
     Foreman::Procfile.new("#{cfg.cwd}/Procfile").entries do |name, command| 
