@@ -70,7 +70,7 @@ Examples of possible slugs could be:
 ## Procfile?
 
 The [Procfile](https://devcenter.heroku.com/articles/procfile) is
-placed in the root of the `.tgz` file and is used to configure
+placed in the cwd of the `.tgz` file and is used to configure
 [supervisord](http://supervisord.org/).
 
 ```
