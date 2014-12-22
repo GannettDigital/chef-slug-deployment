@@ -11,7 +11,7 @@
 	  "cwd": "hello-service-latest",
 	  "env": {"DEFAULT": "value"},
 	  "static": [
-	      {"url": "/static/", "alias": "static/"}
+	      {"url": "/static/", "alias": "hello-service-latest/static/"}
 	  ]
       }
   },

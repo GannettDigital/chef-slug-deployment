@@ -56,9 +56,6 @@ We use Nginx because your application runs under its own user and in
 its own root to protect the system from application faults and
 exploits.
 
-Nginx will also allow us to efficiently serve static content when that
-feature is implemented.
-
 ## What is a slug?
 
 A slug is a `.tgz` file that contains the root directory of your
@@ -67,7 +64,7 @@ service. It contains all the necessary libraries to run your application.
 Examples of possible slugs could be:
 
  * a tgz with a Python `virtualenv`
- * a `sbt universal:packageZipTarball` 
+ * a `sbt universal:packageZipTarball`
  * a node.js project root, with package installed in `node_packages`
 
 ## Procfile?
@@ -90,7 +87,7 @@ task queue system running in a separate process.
 ## dotenv file
 
 The `.env` file you provide defines the [environment variables](http://12factor.net/config) that
-configure your application. 
+configure your application.
 
 These variables provide configuration for the
 [backing services](http://12factor.net/backing-services) for a
@@ -108,6 +105,38 @@ This configuration is integrated like so:
 import os
 app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+```
+
+## Static file hosting
+
+This recipe supports direct hosting of static files stored in the slug.
+This is configured using the `['slug-deployment']['static']` attribute.
+
+The `['slug-deployment']['static']` attribute has the following JSON
+Schema:
+
+```json
+{
+   "type": "array",
+   "items": {
+     "type": "object",
+	 "properties": {
+	   "url": {
+	      "type": "string"
+		  "description": "a relative URL"
+       },
+	   "alias": {
+	      "type": "string",
+		  "description": "A path relative to the root of your slug"
+	   },
+	   "expires": {
+	      "type": "string",
+		  "description": "A nginx expires value http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires"
+	   }
+	 },
+	 "required": ["url", "alias"]
+   }
+}
 ```
 
 ## Logging
@@ -168,28 +197,6 @@ If you want to use `s3://` URLs, `s3cmd` needs to be installed.
 
 </table>
 
-The `static` key has the following JSON Schema:
-
-```json
-{
-   "type": "array",
-   "items": {
-     "type": "object",
-	 "properties": {
-	   "url": {
-	      "type": "string"
-       },
-	   "alias": {
-	      "type": "string"
-	   },
-	   "expires": {
-	      "type": "string"
-	   }
-	 },
-	 "required": ["url", "alias"]
-   }
-}
-```
 
 
 
@@ -217,4 +224,3 @@ differently based on the environment it is deployed to.
 
 Authors: Eric Moritz (http://github.com/ericmoritz)
 https://github.com/ericmoritz/chef-slug-deployment
-

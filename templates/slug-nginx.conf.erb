@@ -16,7 +16,7 @@ server {
   location <%= url %> {
     <% location.each do |key, value| %>
     <% if key == "alias" %>
-       alias <%= @cfg.cwd %>/<%= value %>;
+       alias <%= @cfg.app_root %>/<%= value %>;
     <% else %>
        <%= key %> <%= value %>;
     <% end %>
