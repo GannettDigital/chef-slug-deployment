@@ -65,7 +65,7 @@ Examples of possible slugs could be:
 
  * a tgz with a Python `virtualenv`
  * a `sbt universal:packageZipTarball`
- * a node.js project root, with package installed in `node_packages`
+ * a node.js project root, with packages installed in `node_packages`
 
 ## Procfile?
 
