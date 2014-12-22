@@ -183,7 +183,7 @@ If you want to use `s3://` URLs, `s3cmd` needs to be installed.
   </tr>
   <tr>
     <td><tt>['slug-deployment'']['static']</tt></td>
-    <td>Hash</td>
+    <td>Array</td>
     <td>Maps a slug dir to a url path with an optional expires key http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires
     </td>
   </tr>
