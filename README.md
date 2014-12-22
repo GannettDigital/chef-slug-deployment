@@ -30,7 +30,18 @@ delivery pipeline could be as follows:
   3. Deploy image to a new prod cluster
   4. Execute availability tests against the prod cluster
   5. Replace old prod cluster with new prod cluster.
-  
+
+This recipe is model after the
+[build, release, run](http://12factor.net/build-release-run) of a 12
+factor application.  In short, a release is when the configuration
+(the .env files) is combined with a build (the slug).
+
+The .env files and the slug are dependencies of the build.  Whenever
+there is a code change, this triggers a new build of a slug and
+likewise whenever the .env files are changed, this triggers a new
+release.
+
+![12 Factor CD Pipeline](https://raw.githubusercontent.com/ericmoritz/chef-slug-deployment/master/docs/static/12_factor_cd.png)
 
 ### Design
 
@@ -141,6 +152,18 @@ If you want to use `s3://` URLs, `s3cmd` needs to be installed.
     <td>String</td>
     <td>before starting the service `cd` to the directory relative to the slug root</td>
   </tr>
+  <tr>
+    <td><tt>['slug-deployment'']['static']</tt></td>
+    <td>{url_path(): {'alias': str()[, 'expires': str()]}</td>
+    <td>Maps a slug dir to a url path with an optional [expires](http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires) header </td>
+  </tr>
+
+  <tr>
+    <td><tt>['slug-deployment'']['env']</tt></td>
+    <td>{str(): str()}</td>
+    <td>Provide global environments variables. Useful for setting a global env per role or chef environment</td>
+  </tr>
+
 </table>
 
 A note about the `env_url`.  The `env_url` is a ERB template string
