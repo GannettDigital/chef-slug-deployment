@@ -156,9 +156,6 @@ If you want to use `s3://` URLs, `s3cmd` needs to be installed.
     <td><tt>['slug-deployment'']['static']</tt></td>
     <td>Hash</td>
     <td>Maps a slug dir to a url path with an optional [expires](http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires) header
-	```
-	{url_path(): {'alias': str()[, 'expires': str()]}
-	```
     </td>
   </tr>
 
@@ -166,13 +163,35 @@ If you want to use `s3://` URLs, `s3cmd` needs to be installed.
     <td><tt>['slug-deployment'']['env']</tt></td>
     <td>Hash</td>
     <td>Provide global environments variables. Useful for setting a global env per role or chef environment
-	```
-	{str(): str()}
-	```
     </td>
   </tr>
 
 </table>
+
+The `static` key has the following JSON Schema:
+
+```json
+{
+   "type": "array",
+   "items": {
+     "type": "object",
+	 "properties": {
+	   "url": {
+	      "type": "string"
+       },
+	   "alias": {
+	      "type": "string"
+	   },
+	   "expires": {
+	      "type": "string"
+	   }
+	 },
+	 "required": ["url", "alias"]
+   }
+}
+```
+
+
 
 A note about the `env_url`.  The `env_url` is a ERB template string
 that has access to the chef `node` variable.  This gives you access to

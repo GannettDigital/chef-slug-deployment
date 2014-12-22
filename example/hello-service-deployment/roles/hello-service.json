@@ -10,11 +10,9 @@
 	  "env_url": "s3://eam-scratch/hello-service/environments/<%= node.chef_environment %>.env",
 	  "cwd": "hello-service-latest",
 	  "env": {"DEFAULT": "value"},
-	  "static": {
-	      "/static/": {
-		  "alias": "static/"
-	      }
-	  }
+	  "static": [
+	      {"url": "/static/", "alias": "static/"}
+	  ]
       }
   },
   "run_list": [
