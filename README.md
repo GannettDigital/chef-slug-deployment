@@ -154,14 +154,22 @@ If you want to use `s3://` URLs, `s3cmd` needs to be installed.
   </tr>
   <tr>
     <td><tt>['slug-deployment'']['static']</tt></td>
-    <td>{url_path(): {'alias': str()[, 'expires': str()]}</td>
-    <td>Maps a slug dir to a url path with an optional [expires](http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires) header </td>
+    <td>Hash</td>
+    <td>Maps a slug dir to a url path with an optional [expires](http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires) header
+	```
+	{url_path(): {'alias': str()[, 'expires': str()]}
+	```
+    </td>
   </tr>
 
   <tr>
     <td><tt>['slug-deployment'']['env']</tt></td>
-    <td>{str(): str()}</td>
-    <td>Provide global environments variables. Useful for setting a global env per role or chef environment</td>
+    <td>Hash</td>
+    <td>Provide global environments variables. Useful for setting a global env per role or chef environment
+	```
+	{str(): str()}
+	```
+    </td>
   </tr>
 
 </table>
