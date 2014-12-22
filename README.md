@@ -122,7 +122,7 @@ Schema:
      "type": "object",
 	 "properties": {
 	   "url": {
-	      "type": "string"
+	      "type": "string",
 		  "description": "a relative URL"
        },
 	   "alias": {
