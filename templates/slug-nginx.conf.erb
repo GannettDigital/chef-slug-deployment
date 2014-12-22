@@ -12,14 +12,16 @@ server {
     proxy_pass http://127.0.0.1:5000;
   }
 
-  <% node['slug-deployment']['static'].each do |url, location| %>
-  location <%= url %> {
-    <% location.each do |key, value| %>
-    <% if key == "alias" %>
-       alias <%= @cfg.app_root %>/<%= value %>;
-    <% else %>
-       <%= key %> <%= value %>;
-    <% end %>
+  <% node['slug-deployment']['static'].each do |item| %>
+  location <%= item['url'] %> {
+    <% item.each do |key, value| %>
+      <% if key != "url" %>
+        <% if key == "alias" %>
+          alias <%= @cfg.app_root %>/<%= value %>;
+        <% else %>
+          <%= key %> <%= value %>;
+        <% end %>
+      <% end %>
     <% end %>
   }	   
   <% end %>
