@@ -148,9 +148,9 @@ If you want to use `s3://` URLs, `s3cmd` needs to be installed.
     <td>An ERB template for the environment URL, http://, https://, s3://</td>
   </tr>
   <tr>
-    <td><tt>['slug-deployment'']['chdir']</tt></td>
+    <td><tt>['slug-deployment'']['cwd']</tt></td>
     <td>String</td>
-    <td>before starting the service `cd` to the directory relative to the slug root</td>
+    <td>before starting the service `cd` to the working directory relative to the slug root</td>
   </tr>
   <tr>
     <td><tt>['slug-deployment'']['static']</tt></td>

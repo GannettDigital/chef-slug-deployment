@@ -21,8 +21,8 @@ module SlugDeployment
 
     ## Command config
     cfg.command = "shoreman.sh"
-    cfg.cwd = if node['slug-deployment']['chdir'] then 
-                      "#{cfg.app_root}/#{node['slug-deployment']['chdir']}"
+    cfg.cwd = if node['slug-deployment']['cwd'] then 
+                      "#{cfg.app_root}/#{node['slug-deployment']['cwd']}"
                     else
                       cfg.app_root
                     end
