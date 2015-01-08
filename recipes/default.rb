@@ -27,10 +27,13 @@ end
 ###############################################################################
 ## Set up the service's user and service_root
 ###############################################################################
-user cfg.user do
-  supports :manage_home => true
-  home cfg.home
+if cfg.user != "nginx" then
+  user cfg.user do
+    supports :manage_home => true
+    home cfg.home
+  end
 end
+
 
 directory cfg.app_root do
   mode 0755
@@ -67,6 +70,7 @@ ruby_block "config" do
     Foreman::Procfile.new("#{cfg.cwd}/Procfile").entries do |name, command| 
       # web is always on web, everything else is an offset of 5000
       if name == "web" then
+        node.set['slug-deployment']['web_worker?'] = true
         p = 5000
       else
         p = port

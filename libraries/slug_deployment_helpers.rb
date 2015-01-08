@@ -15,7 +15,11 @@ module SlugDeployment
     cfg.app_root = "/opt/#{cfg.app_name}"
 
     ## User config
-    cfg.user = cfg.app_name
+    if node['slug-deployment']['user'] then
+          cfg.user = node['slug-deployment']['user']
+    else
+      cfg.user = cfg.app_name
+    end
     cfg.home = "/home/#{cfg.user}"
 
 
@@ -40,6 +44,14 @@ module SlugDeployment
     context = OpenStruct.new(node: node)
     cfg.env_url = ERB.new(node['slug-deployment']['env_url']).result(context.instance_eval { binding })
     cfg.env_path = "#{cfg.cwd}/.env"
+
+    ## Nginx hacks
+    cfg.nginx_http_extra = ERB.new(node['slug-deployment']['nginx_http_extra_template']).result(context.instance_eval { binding })
+    if node['slug-deployment']['http_root'] then
+      cfg.http_root = "#{cfg.cwd}/#{node['slug-deployment']['http_root']}"
+    else
+      cfg.http_root = nil
+    end
 
     return cfg
   end
