@@ -65,12 +65,12 @@ Examples of possible slugs could be:
 
  * a tgz with a Python `virtualenv`
  * a `sbt universal:packageZipTarball`
- * a node.js project root, with package installed in `node_packages`
+ * a node.js project root, with packages installed in `node_packages`
 
 ## Procfile?
 
 The [Procfile](https://devcenter.heroku.com/articles/procfile) is
-placed in the root of the `.tgz` file and is used to configure
+placed in the cwd of the `.tgz` file and is used to configure
 [supervisord](http://supervisord.org/).
 
 ```
