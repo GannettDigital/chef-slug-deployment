@@ -61,12 +61,14 @@ def parse_env(content):
     return values
 
 
-def io_load_env():
+def io_load_env(manifest_env):
     """
     io_load_env() -> dict(str(), str())
     """
     content = open("./.env").read()
-    return parse_env(content)
+    manifest_env.update(parse_env(content))
+    return manifest_env
+
 
 
 def io_load_procfile():
@@ -86,7 +88,7 @@ def io_load_manifest():
 
 def map_context(manifest, processes, env):
     def format_env((k,v)):
-        return "{0}={1!r}".format(k,v)
+        return "{0}={1!r}".format(k,v.encode("utf-8"))
     ctx = {
         "app_name": manifest['app_name'],
         "process": []
@@ -108,8 +110,8 @@ def map_context(manifest, processes, env):
 
 
 def main():
-    env = io_load_env()
     manifest = io_load_manifest()
+    env = io_load_env(manifest['env'])
     processes = io_load_procfile()
     ctx = map_context(manifest, processes, env)
     out_contents = pystache.render(TEMPLATE, ctx)

@@ -1,5 +1,6 @@
 {
     "app_name": "test-app",
     "cwd": "/opt/test-app/",
-    "user": "test-app"
+    "user": "test-app",
+    "env": {"DEFAULT": "DEFAULT-VALUE"}
 }
