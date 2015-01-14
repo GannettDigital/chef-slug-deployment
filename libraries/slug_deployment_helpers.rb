@@ -12,7 +12,7 @@ module SlugDeployment
 
     ## App config
     cfg.app_name = node['slug-deployment']['name']
-    cfg.app_root = "/opt/#{cfg.app_name}"
+    cfg.app_root = "/opt/apps/#{cfg.app_name}"
 
     ## User config
     if node['slug-deployment']['user'] then

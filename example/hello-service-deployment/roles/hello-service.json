@@ -7,7 +7,7 @@
       "slug-deployment": {
 	  "name": "hello-service",
 	  "slug_url": "s3://eam-scratch/hello-service/hello-service-latest.tgz",
-	  "env_url": "s3://eam-scratch/hello-service/environments/<%= node.chef_environment %>.env",
+	  "env_url": "s3://eam-scratch/hello-service/environments/$ENVIRONMENT.env",
 	  "cwd": "hello-service-latest",
 	  "env": {"DEFAULT": "value"},
 	  "static": [
