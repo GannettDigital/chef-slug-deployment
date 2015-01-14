@@ -72,7 +72,7 @@ ruby_block "slug-manifest.json" do
                JSON.generate({
                                "app_name" => cfg.app_name,
                                "user" => cfg.user,
-                               "env" => cfg.env,
+                               "env" => node['slug-deployment']['env'],
                                "cwd" => cfg.cwd
                              }))
   end
