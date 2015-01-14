@@ -6,6 +6,8 @@ require 'dotenv'
 include_recipe 'nginx'
 include_recipe 'supervisor'
 
+python_pip "pystache==0.5.4"
+
 ###############################################################################
 ## Extract the recipe cfg
 ###############################################################################
@@ -62,34 +64,33 @@ download(cfg.env_url, cfg.env_path, cfg.user)
 ###############################################################################
 ## Configure Supervisor
 ###############################################################################
-ruby_block "config" do
+# dump the config as a manifest
+ruby_block "slug-manifest.json" do
   block do
-    node.set['slug-deployment']['env'] = node['slug-deployment']['env'].merge(Dotenv::Environment.new("#{cfg.cwd}/.env"))
-    port = 5001
-    procs = []
-    Foreman::Procfile.new("#{cfg.cwd}/Procfile").entries do |name, command| 
-      # web is always on web, everything else is an offset of 5000
-      if name == "web" then
-        node.set['slug-deployment']['web_worker?'] = true
-        p = 5000
-      else
-        p = port
-        port = port + 1
-      end
-      procs.push({:name => name, :command => command, :port => p})
-    end
-    node.set['procs'] = procs
+    
+    File.write("#{cfg.cwd}/.slug-manifest.json", 
+               JSON.generate({
+                               "app_name" => cfg.app_name,
+                               "user" => cfg.user,
+                               "env" => node['slug-deployment']['env'],
+                               "cwd" => cfg.cwd
+                             }))
   end
 end
 
 
-
-template "/etc/supervisor.d/#{cfg.app_name}.conf" do
-  source "supervisor-group.conf.erb"
-  mode 0644
-  variables :cfg => cfg
+# put the supervisor group command to /usr/local/bin
+cookbook_file "/usr/local/bin/render-supervisor-group.py" do
+  source "render-supervisor-group.py"
+  mode 0755
 end
 
+## use the render command to create the new group
+execute "/usr/local/bin/render-supervisor-group.py /etc/supervisor.d/" do
+  cwd cfg.cwd
+end
+
+## restart supervisor to get the new command
 service "supervisor" do
   action [:restart]
 end
