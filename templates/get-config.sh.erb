@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# figure out which environment we're in
+set -e
+ENVIRONMENT=`cat /root/environment.txt`
+cd "<%= @cfg.cwd %>"
+
+###############################################################################
+## Download the .env file
+###############################################################################
+CONFIG_URL="<%= @cfg.env_url %>"
+if [[ "$CONFIG_URL" = s3://* ]]; then
+    # download with s3cmd
+    s3cmd get --force "$CONFIG_URL" ".env.new"
+else
+    # download with curl
+    curl "$CONFIG_URL" >> ".env.new"
+fi
+
+###############################################################################
+## replace the .env file if it has changed
+###############################################################################
+# compare the two files
+if ! cmp --silent .env .env.new ; then 
+    # replace the .env file,
+    mv .env.new .env
+
+    # generate the supervisor.d conf file
+    /usr/local/bin/render-supervisor-group.py /etc/supervisor.d/
+
+    # restart supervisord
+    echo "reloading supervisor"
+    supervisorctl reload
+fi
+
