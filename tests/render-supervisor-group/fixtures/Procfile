@@ -1,0 +1,3 @@
+web: web.sh
+worker-1: worker.sh
+worker-2: worker.sh

@@ -2,3 +2,4 @@ target/
 *~
 .vagrant/
 Berksfile.lock
+render-supervisor-group/fixtures/out/
